@@ -94,6 +94,7 @@ class _MainPageState extends State<MainPage> {
             margin: const EdgeInsets.all(4.0),
             decoration: BoxDecoration(
                 color: Color(0x8875D701),
+                border: Border.all(color: Colors.green, width: 1.0),
                 borderRadius: BorderRadius.all(Radius.circular(30.0))),
             width: 100,
             height: 100,
@@ -140,23 +141,44 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents.map((event) {
-        Info info = event;
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          child: ListTile(
-              leading: Icon(Icons.timer),
-              dense: true,
-              title: Text(DateFormat('yyyy-MM-dd HH:mm').format(info.datetime),
-                  style: TextStyle(fontSize: 18)),
-              trailing: Text(
-                info.carriage + '车' + info.seat.toUpperCase(),
-                style: TextStyle(color: Colors.grey, fontSize: 18),
-              ),
-              onTap: () => _modifyEvent(info: info)),
-        );
-      }).toList(),
+    if (_selectedEvents == null || _selectedEvents.isEmpty) {
+      return Container();
+    }
+
+    Info info = _selectedEvents[0];
+    if (info == null) {
+      return Container();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          leading: Text('Ticket Info',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey)),
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('Datetime', style: TextStyle(fontSize: 18)),
+          trailing: Text(DateFormat('yyyy-MM-dd HH:mm').format(info.datetime),
+              style: TextStyle(color: Colors.grey, fontSize: 18)),
+        ),
+        ListTile(
+          leading: Icon(Icons.train),
+          title: Text('Carriage', style: TextStyle(fontSize: 18)),
+          trailing: Text('No.' + info.carriage,
+              style: TextStyle(color: Colors.grey, fontSize: 18)),
+        ),
+        ListTile(
+          leading: Icon(Icons.airline_seat_flat),
+          title: Text('Seat', style: TextStyle(fontSize: 18)),
+          trailing: Text(info.seat.toUpperCase(),
+              style: TextStyle(color: Colors.grey, fontSize: 18)),
+        ),
+      ],
     );
   }
 
