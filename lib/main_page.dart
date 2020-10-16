@@ -44,6 +44,14 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text('TrainReminder'),
         backgroundColor: Color(0xFF56A902),
+        actions: [
+          GestureDetector(
+            child: Text('TODAY'),
+            onTap: () {
+              _calendarController.setSelectedDay(DateTime.now());
+            },
+          )
+        ],
       ),
       body: Column(children: [
         _buildTableCalendarWithBuilders(),
