@@ -197,7 +197,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void _onDaySelected(DateTime dateTime, List events) {
+  void _onDaySelected(DateTime dateTime, List events, List holidays) {
     setState(() {
       _selectedDateTime = dateTime;
       _selectedEvents = events;
