@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:train_reminder/db_helper.dart';
@@ -10,6 +13,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  List pickerData;
   CalendarController _calendarController;
   Map<DateTime, List> _events;
   DateTime _selectedDateTime;
@@ -29,6 +33,24 @@ class _MainPageState extends State<MainPage> {
     _selectedEvents = _events[_selectedDay] ?? [];
     _hasEvent = _selectedEvents.isNotEmpty;
     _loadStored();
+
+    pickerData = List();
+
+    var carriageData = List();
+    for (var i = 1; i <= 16; i++) {
+      carriageData.add('$i车');
+    }
+
+    var seatNumberData = List();
+    for (var i = 1; i <= 16; i++) {
+      seatNumberData.add('$i');
+    }
+
+    var seatData = ['A', 'B', 'C', 'D', 'F'];
+
+    pickerData.add(carriageData);
+    pickerData.add(seatNumberData);
+    pickerData.add(seatData);
   }
 
   @override
@@ -45,11 +67,16 @@ class _MainPageState extends State<MainPage> {
         title: Text('TrainReminder'),
         backgroundColor: Color(0xFF56A902),
         actions: [
-          GestureDetector(
-            child: Text('TODAY'),
-            onTap: () {
-              _calendarController.setSelectedDay(DateTime.now());
-            },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              child: Center(child: Text('TODAY')),
+              onTap: () {
+                setState(() {
+                  _calendarController.setSelectedDay(DateTime.now());
+                });
+              },
+            ),
           )
         ],
       ),
@@ -230,7 +257,7 @@ class _MainPageState extends State<MainPage> {
       return;
     }
 
-    Info result = await _showDetailDialog(time);
+    Info result = await _showPickerDialog(time);
 
     if (result == null) {
       return;
@@ -258,7 +285,7 @@ class _MainPageState extends State<MainPage> {
       return;
     }
 
-    Info result = await _showDetailDialog(time, info: info);
+    Info result = await _showPickerDialog(time, info: info);
 
     if (result == null) {
       return;
@@ -284,6 +311,41 @@ class _MainPageState extends State<MainPage> {
       _icon = Icons.add;
       _selectedEvents = _events[_selectedDateTime];
     });
+  }
+
+  Future<Info> _showPickerDialog(TimeOfDay time, {Info info}) async {
+    var result = await Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: pickerData,
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [8, 9, 2],
+        title: Text('Carriage And Seat'),
+        confirmText: 'OK',
+        selectedTextStyle: TextStyle(color: Color(0xFF56A902)),
+        cancel: FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'CANCEL',
+              style: TextStyle(color: Colors.grey),
+            )),
+        onConfirm: (Picker picker, List value) {
+          print(value.toString());
+          print(picker.getSelectedValues());
+        }).showDialog(context);
+
+    DateTime temp = DateTime(_selectedDateTime.year, _selectedDateTime.month,
+        _selectedDateTime.day, time.hour, time.minute);
+
+    Info newInfo = Info(
+        carriage: pickerData[0][result[0]],
+        seat: pickerData[1][result[1]] + pickerData[2][result[2]],
+        datetime: temp);
+    if (info != null) newInfo.id = info.id;
+    return newInfo;
   }
 
   Future<Info> _showDetailDialog(TimeOfDay time, {Info info}) async {
