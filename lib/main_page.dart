@@ -288,82 +288,82 @@ class _MainPageState extends State<MainPage> {
 
   Future<Info> _showDetailDialog(TimeOfDay time, {Info info}) async {
     return await showDialog(
-        context: context,
-        builder: (_) {
-          final _formKey = GlobalKey<FormState>();
-          final _carriageController =
-              TextEditingController(text: info != null ? info.carriage : '');
-          final _seatController =
-              TextEditingController(text: info != null ? info.seat : '');
-          return AlertDialog(
-            title: Text('Carriage And Seat'),
-            content: Form(
-              key: _formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      controller: _carriageController,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp('[0-9]'))
-                      ],
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Carriage can not be empty.';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          labelText: 'Carriage',
-                          hintText: 'Input carriage. Range(1-16)'),
-                    ),
-                    TextFormField(
-                      controller: _seatController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Seat can not be empty';
-                        } else if (!RegExp('[0-9][A-Fa-f]').hasMatch(value)) {
-                          return 'Malformed seat.';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          labelText: 'Seat',
-                          hintText: 'Input seat. Exp: 8A/12D'),
-                    ),
-                  ]),
-            ),
-            actions: [
-              FlatButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  textColor: Colors.grey,
-                  child: Text('CANCEL')),
-              FlatButton(
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      DateTime temp = DateTime(
-                          _selectedDateTime.year,
-                          _selectedDateTime.month,
-                          _selectedDateTime.day,
-                          time.hour,
-                          time.minute);
+      context: context,
+      builder: (_) {
+        final _formKey = GlobalKey<FormState>();
+        final _carriageController =
+            TextEditingController(text: info != null ? info.carriage : '');
+        final _seatController =
+            TextEditingController(text: info != null ? info.seat : '');
+        return AlertDialog(
+          title: Text('Carriage And Seat'),
+          content: Form(
+            key: _formKey,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _carriageController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+                    ],
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Carriage can not be empty.';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: 'Carriage',
+                        hintText: 'Input carriage. Range(1-16)'),
+                  ),
+                  TextFormField(
+                    controller: _seatController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Seat can not be empty';
+                      } else if (!RegExp('[0-9][A-Fa-f]').hasMatch(value)) {
+                        return 'Malformed seat.';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: 'Seat', hintText: 'Input seat. Exp: 8A/12D'),
+                  ),
+                ]),
+          ),
+          actions: [
+            FlatButton(
+                onPressed: () => Navigator.of(context).pop(),
+                textColor: Colors.grey,
+                child: Text('CANCEL')),
+            FlatButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    DateTime temp = DateTime(
+                        _selectedDateTime.year,
+                        _selectedDateTime.month,
+                        _selectedDateTime.day,
+                        time.hour,
+                        time.minute);
 
-                      Info newInfo = Info(
-                          carriage: _carriageController.text,
-                          seat: _seatController.text,
-                          datetime: temp);
-                      if (info != null) newInfo.id = info.id;
+                    Info newInfo = Info(
+                        carriage: _carriageController.text,
+                        seat: _seatController.text,
+                        datetime: temp);
+                    if (info != null) newInfo.id = info.id;
 
-                      Navigator.of(context).pop(newInfo);
-                    }
-                  },
-                  textColor: Colors.green,
-                  child: Text('OK'))
-            ],
-          );
-        });
+                    Navigator.of(context).pop(newInfo);
+                  }
+                },
+                textColor: Colors.green,
+                child: Text('OK'))
+          ],
+        );
+      },
+    );
   }
 
   void _loadStored() async {
