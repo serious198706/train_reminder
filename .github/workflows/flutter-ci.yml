@@ -5,7 +5,7 @@ name: Flutter CI
 on:
   push:
     branches:
-    - main
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
     
 # on: push    # Default will running for every branch.
     
